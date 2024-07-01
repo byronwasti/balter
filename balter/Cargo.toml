@@ -1,7 +1,7 @@
 [package]
 name = "balter"
 license = "MIT"
-version = "0.7.0"
+version = "0.7.1"
 edition = "2021"
 authors = ["Byron Wasti <github@byronwasti.com>"]
 homepage = "https://github.com/byronwasti/balter"
@@ -15,7 +15,7 @@ publish = true
 [dependencies]
 balter-macros = { version = "0.3.0", path = "../balter-macros" }
 balter-core = { version = "0.5.0", path = "../balter-core" }
-balter-runtime = { version = "0.3.0", path = "../balter-runtime", optional = true }
+balter-runtime = { version = "0.3.1", path = "../balter-runtime", optional = true }
 
 arc-swap = "1.6.0"
 governor = "0.6.0"
