@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Balter v0.5.0 | Balter Load Testing </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    
+    <style>
+    :root {
+        --primary-color: #382929;
+        --primary-text-color: #d7d7d7;
+        --primary-text-color-over: #FFF;
+        --primary-link-color: #9b9b9b;
+        --secondary-color: #282828;
+        --secondary-text-color: #f2f2f2;
+        --toc-highlight-text-color: #f2f2f2;
+        --toc-background-color: #3a3a3a;
+        --code-color: white;
+        --code-background-color: none;
+
+        --shadow-color: #202020;
+        --header-font-family: "Fira Sans", sans-serif;
+        --text-font-family: "Fira Sans", sans-serif;
+    }
+</style>
+
+    
+    <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="https://www.balterloadtesting.com/balter/juice.css">
+    
+    
+</head>
+
+<body>
+    
+<header class="box-shadow">
+    
+
+<a href="https://www.balterloadtesting.com">
+    <div class="logo">
+        Balter Load Testing
+    </div>
+</a>
+
+<nav>
+    
+    
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/autobalter">AutoBalter</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/blog">Blog</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/guide">Guide</a>
+        
+        <a class="nav-item subtitle-text" href="https://docs.rs/balter/0.5.0/balter/">Docs</a>
+        
+        <a class="nav-item subtitle-text" href="https://crates.io/crates/balter">Crates.io</a>
+        
+        <a class="nav-item subtitle-text" href="https://github.com/BalterLoadTesting/balter">Github</a>
+        
+    
+</nav>
+
+</header>
+
+
+    <main>
+        
+        
+        
+        
+        
+        <div class="toc">
+            <div class="toc-sticky">
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/blog/balter-0-5-0/#latency-controller-added">Latency Controller Added</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/blog/balter-0-5-0/#duration-is-no-longer-required">Duration is No Longer Required</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/blog/balter-0-5-0/#scenario-overhaul">Scenario Overhaul</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/blog/balter-0-5-0/#a-website">A Website</a>
+                </div>
+                
+                
+            </div>
+        </div>
+        
+        
+
+        <div class="content text">
+            
+<div style="display: flex; flex-direction: row; align-items: center">
+<div class="heading-text">Balter v0.5.0</div>
+<h2 style="margin-left: 2em" class="subtext">Byron Wasti, 2024-04-12</h2>
+</div>
+<p>The release of Balter v0.5.0 comes with major core refactors and a major feature which rounds out the basic functionality for single-server operation.</p>
+<h1 id="latency-controller-added">Latency Controller Added</h1>
+<p>You can now limit a Scenario based on latency measurements. Currently this takes both a latency value as well as a quantile (eg. p90):</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#96b5b4;">foo_scenario</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">20</span><span>), </span><span style="color:#d08770;">0.95</span><span>) </span><span style="color:#65737e;">// a p95 latency of 20ms
+</span><span>    .await;
+</span></code></pre>
+<h1 id="duration-is-no-longer-required">Duration is No Longer Required</h1>
+<p>A <code>.duration()</code> call was previously required for a Scenario. Now it is not needed, and instead will default to running indefinitely.</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// Runs indefinitely
+</span><span style="color:#96b5b4;">foo_scenario</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>    .await;
+</span></code></pre>
+<h1 id="scenario-overhaul">Scenario Overhaul</h1>
+<p>The Scenario running logic was completely overhauled and simplified. This was done for a number of reasons, but the biggest benefit is a far more intuitive and powerful API. Scenarios can now takes as many constraints as you want, rather than just one:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// Limit with all of:
+</span><span style="color:#65737e;">// - Max TPS of 10,000
+</span><span style="color:#65737e;">// - Max p99 latency of 20ms
+</span><span style="color:#65737e;">// - Max error rate of 3%
+</span><span style="color:#96b5b4;">foo_scenario</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">error_rate</span><span>(</span><span style="color:#d08770;">0.03</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">20</span><span>), </span><span style="color:#d08770;">0.99</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">duration</span><span>(Duration::from_secs(</span><span style="color:#d08770;">360</span><span>))
+</span><span>    .await
+</span></code></pre>
+<h1 id="a-website">A Website</h1>
+<p>Balter now has a website! This will make it far easier to have long-form documentation and keep it updated more rapidly.</p>
+
+
+        </div>
+
+        
+        
+    </main>
+
+    
+<footer>
+    <small class="subtext">
+        <a href="mailto:contact@balterloadtesting.com">contact@balterloadtesting.com</a>
+    </small>
+    <small class="subtext">
+        <a href="https://balterloadtesting.com">BalterLoadTesting.com</a> © 2024
+    </small>
+</footer>
+
+</body>
+<script>
+    const scrollHandler = entries => {
+        // Find the first entry which intersecting and ratio > 0.9 to highlight.
+        let entry = entries.find(entry => {
+            return entry.isIntersecting && entry.intersectionRatio > 0.9;
+        });
+        if (!entry) return;
+
+        document.querySelectorAll(".toc a").forEach((item) => {
+            item.classList.remove("active");
+        });
+
+        // let url = new URL(`#${entry.target.id}`);
+        let link = document.querySelector(`.toc a[href$="${decodeURIComponent(`#${entry.target.id}`)}"]`)
+        if (link) {
+            link.classList.add("active");
+            link.scrollIntoView({ behavior: "auto", block: "nearest" });
+        }
+    };
+    // Set -100px root margin to improve highlight experience.
+    const observer = new IntersectionObserver(scrollHandler, { threshold: 1 });
+    let items = document.querySelectorAll('h1,h2,h3,h4,h5,h6');
+    items.forEach(item => observer.observe(item));
+</script>
+
+</html>

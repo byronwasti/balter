@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Balter v0.6.0 | Balter Load Testing </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    
+    <style>
+    :root {
+        --primary-color: #382929;
+        --primary-text-color: #d7d7d7;
+        --primary-text-color-over: #FFF;
+        --primary-link-color: #9b9b9b;
+        --secondary-color: #282828;
+        --secondary-text-color: #f2f2f2;
+        --toc-highlight-text-color: #f2f2f2;
+        --toc-background-color: #3a3a3a;
+        --code-color: white;
+        --code-background-color: none;
+
+        --shadow-color: #202020;
+        --header-font-family: "Fira Sans", sans-serif;
+        --text-font-family: "Fira Sans", sans-serif;
+    }
+</style>
+
+    
+    <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="https://www.balterloadtesting.com/balter/juice.css">
+    
+    
+</head>
+
+<body>
+    
+<header class="box-shadow">
+    
+
+<a href="https://www.balterloadtesting.com">
+    <div class="logo">
+        Balter Load Testing
+    </div>
+</a>
+
+<nav>
+    
+    
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/autobalter">AutoBalter</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/blog">Blog</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/guide">Guide</a>
+        
+        <a class="nav-item subtitle-text" href="https://docs.rs/balter/0.5.0/balter/">Docs</a>
+        
+        <a class="nav-item subtitle-text" href="https://crates.io/crates/balter">Crates.io</a>
+        
+        <a class="nav-item subtitle-text" href="https://github.com/BalterLoadTesting/balter">Github</a>
+        
+    
+</nav>
+
+</header>
+
+
+    <main>
+        
+        
+        
+        
+        
+        <div class="toc">
+            <div class="toc-sticky">
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/blog/balter-0-6-0/#sampling-logic-rewrite">Sampling Logic Rewrite</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/blog/balter-0-6-0/#hints">Hints</a>
+                </div>
+                
+                
+            </div>
+        </div>
+        
+        
+
+        <div class="content text">
+            
+<div style="display: flex; flex-direction: row; align-items: center">
+<div class="heading-text">Balter v0.6.0</div>
+<h2 style="margin-left: 2em" class="subtext">Byron Wasti, 2024-05-10</h2>
+</div>
+<p>The release of Balter v0.6.0 rewrites the entire sampling logic and adds the concept of <code>hints</code> to running Scenarios.</p>
+<h1 id="sampling-logic-rewrite">Sampling Logic Rewrite</h1>
+<p>The sampling logic used in Balter was written at the start of the project, and has evolved with duct-tape style engineering. Unfortunately this meant that it provided pretty crappy data to the controllers, and likely was leading to various hard-to-track down issues.</p>
+<p>Now, the sampling logic provides far more statistically valid data which can be used to make more accurate decisions with. Rather than returning data at a fixed interval, the sampler will determine when the data has converged on certain values (specifically that the mean TPS has stabilized). It will also automatically adjust sampling intervals to ensure that low-TPS situations still have valid data collected.</p>
+<h1 id="hints">Hints</h1>
+<p>In an effort to make Balter more flexible, you can now provide &quot;hints&quot; to the Scenarios being run. For example:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#96b5b4;">my_scenario</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">hint</span><span>(Hint::Concurrency(</span><span style="color:#d08770;">100</span><span>))
+</span><span>    .await;
+</span></code></pre>
+<p>This will have Balter start off with a concurrency of 100 for that Scenario, rather than the default of 10. Balter will continue to autoscale values, but this provides options for speeding up convergence.</p>
+<p>Currently there is only a single hint available, <code>Hint::Concurrency</code>, but more will be added.</p>
+
+
+        </div>
+
+        
+        
+    </main>
+
+    
+<footer>
+    <small class="subtext">
+        <a href="mailto:contact@balterloadtesting.com">contact@balterloadtesting.com</a>
+    </small>
+    <small class="subtext">
+        <a href="https://balterloadtesting.com">BalterLoadTesting.com</a> © 2024
+    </small>
+</footer>
+
+</body>
+<script>
+    const scrollHandler = entries => {
+        // Find the first entry which intersecting and ratio > 0.9 to highlight.
+        let entry = entries.find(entry => {
+            return entry.isIntersecting && entry.intersectionRatio > 0.9;
+        });
+        if (!entry) return;
+
+        document.querySelectorAll(".toc a").forEach((item) => {
+            item.classList.remove("active");
+        });
+
+        // let url = new URL(`#${entry.target.id}`);
+        let link = document.querySelector(`.toc a[href$="${decodeURIComponent(`#${entry.target.id}`)}"]`)
+        if (link) {
+            link.classList.add("active");
+            link.scrollIntoView({ behavior: "auto", block: "nearest" });
+        }
+    };
+    // Set -100px root margin to improve highlight experience.
+    const observer = new IntersectionObserver(scrollHandler, { threshold: 1 });
+    let items = document.querySelectorAll('h1,h2,h3,h4,h5,h6');
+    items.forEach(item => observer.observe(item));
+</script>
+
+</html>

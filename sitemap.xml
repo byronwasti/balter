@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://www.balterloadtesting.com/balter/</loc>
+    </url>
+    <url>
+        <loc>https://www.balterloadtesting.com/balter/blog/</loc>
+    </url>
+    <url>
+        <loc>https://www.balterloadtesting.com/balter/blog/balter-0-5-0/</loc>
+        <lastmod>2024-04-12</lastmod>
+    </url>
+    <url>
+        <loc>https://www.balterloadtesting.com/balter/blog/balter-0-6-0/</loc>
+        <lastmod>2024-05-10</lastmod>
+    </url>
+    <url>
+        <loc>https://www.balterloadtesting.com/balter/guide/</loc>
+    </url>
+</urlset>

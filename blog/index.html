@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Balter Load Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    
+    <style>
+    :root {
+        --primary-color: #382929;
+        --primary-text-color: #d7d7d7;
+        --primary-text-color-over: #FFF;
+        --primary-link-color: #9b9b9b;
+        --secondary-color: #282828;
+        --secondary-text-color: #f2f2f2;
+        --toc-highlight-text-color: #f2f2f2;
+        --toc-background-color: #3a3a3a;
+        --code-color: white;
+        --code-background-color: none;
+
+        --shadow-color: #202020;
+        --header-font-family: "Fira Sans", sans-serif;
+        --text-font-family: "Fira Sans", sans-serif;
+    }
+</style>
+
+    
+    <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="https://www.balterloadtesting.com/balter/juice.css">
+    
+    
+</head>
+
+<body>
+    
+
+    <header class="box-shadow">
+      
+
+<a href="https://www.balterloadtesting.com">
+    <div class="logo">
+        Balter Load Testing
+    </div>
+</a>
+
+<nav>
+    
+    
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/autobalter">AutoBalter</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/blog">Blog</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/guide">Guide</a>
+        
+        <a class="nav-item subtitle-text" href="https://docs.rs/balter/0.5.0/balter/">Docs</a>
+        
+        <a class="nav-item subtitle-text" href="https://crates.io/crates/balter">Crates.io</a>
+        
+        <a class="nav-item subtitle-text" href="https://github.com/BalterLoadTesting/balter">Github</a>
+        
+    
+</nav>
+
+    </header>
+
+    
+
+    <main>
+        
+        
+        
+        
+        
+        <div class="toc">
+        </div>
+        
+        
+
+        <div class="content text">
+            
+            <div id="features" class="heading-text">Blog</div>
+            <h1 id=""></h1>
+
+
+            
+            <h1 style="border: None"><span style="padding-right: 1em">2024-04-12</span> <a href="https:&#x2F;&#x2F;www.balterloadtesting.com&#x2F;balter&#x2F;blog&#x2F;balter-0-5-0&#x2F;">Balter v0.5.0</a></h1>
+            
+            <h1 style="border: None"><span style="padding-right: 1em">2024-05-10</span> <a href="https:&#x2F;&#x2F;www.balterloadtesting.com&#x2F;balter&#x2F;blog&#x2F;balter-0-6-0&#x2F;">Balter v0.6.0</a></h1>
+            
+
+            
+        </div>
+
+        
+        
+    </main>
+
+    
+    <footer>
+        <small class="subtext">
+            <a href="https://huhu.io">Huhu.io</a> © 2021
+        </small>
+    </footer>
+    
+</body>
+<script>
+    const scrollHandler = entries => {
+        // Find the first entry which intersecting and ratio > 0.9 to highlight.
+        let entry = entries.find(entry => {
+            return entry.isIntersecting && entry.intersectionRatio > 0.9;
+        });
+        if (!entry) return;
+
+        document.querySelectorAll(".toc a").forEach((item) => {
+            item.classList.remove("active");
+        });
+
+        // let url = new URL(`#${entry.target.id}`);
+        let link = document.querySelector(`.toc a[href$="${decodeURIComponent(`#${entry.target.id}`)}"]`)
+        if (link) {
+            link.classList.add("active");
+            link.scrollIntoView({ behavior: "auto", block: "nearest" });
+        }
+    };
+    // Set -100px root margin to improve highlight experience.
+    const observer = new IntersectionObserver(scrollHandler, { threshold: 1 });
+    let items = document.querySelectorAll('h1,h2,h3,h4,h5,h6');
+    items.forEach(item => observer.observe(item));
+</script>
+
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Balter Load Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    
+    <style>
+    :root {
+        --primary-color: #382929;
+        --primary-text-color: #d7d7d7;
+        --primary-text-color-over: #FFF;
+        --primary-link-color: #9b9b9b;
+        --secondary-color: #282828;
+        --secondary-text-color: #f2f2f2;
+        --toc-highlight-text-color: #f2f2f2;
+        --toc-background-color: #3a3a3a;
+        --code-color: white;
+        --code-background-color: none;
+
+        --shadow-color: #202020;
+        --header-font-family: "Fira Sans", sans-serif;
+        --text-font-family: "Fira Sans", sans-serif;
+    }
+</style>
+
+    
+    <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="https://www.balterloadtesting.com/balter/juice.css">
+    
+    
+</head>
+
+<body>
+    
+
+    <header class="pos-absolute" style="background-color: transparent">
+        
+
+<a href="https://www.balterloadtesting.com">
+    <div class="logo">
+        Balter Load Testing
+    </div>
+</a>
+
+<nav>
+    
+    
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/autobalter">AutoBalter</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/blog">Blog</a>
+        
+        <a class="nav-item subtitle-text" href="https://www.balterloadtesting.com/balter/guide">Guide</a>
+        
+        <a class="nav-item subtitle-text" href="https://docs.rs/balter/0.5.0/balter/">Docs</a>
+        
+        <a class="nav-item subtitle-text" href="https://crates.io/crates/balter">Crates.io</a>
+        
+        <a class="nav-item subtitle-text" href="https://github.com/BalterLoadTesting/balter">Github</a>
+        
+    
+</nav>
+
+    </header>
+
+    <div class="hero">
+        
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<div class="hero-wrapper">
+<section class="text-center">
+    <h1 class="heading-text" style="font-size: 50px">
+        Balter-rs
+        <!--<img src="https://www.balterloadtesting.com/balter/logo.svg" style="width:5em">-->
+    </h1>
+    <h3 class="title-text">
+        The composable distributed load testing framework.
+    </h3>
+    <h3 class="title-text">
+        Open Source under the MIT License.
+    </h3>
+    <div>
+        <a class="github-button" href="https://github.com/BalterLoadTesting/balter" data-size="large" data-show-count="true"
+            aria-label="Star BalterLoadTesting/balter on GitHub">Star</a>
+        <a class="github-button" href="https://github.com/BalterLoadTesting/balter/fork" data-size="large"
+            data-show-count="true" aria-label="Fork BalterLoadTesting/balter on GitHub">Fork</a>
+    </div>
+</section>
+<div class="content demo-code">
+  <pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">use </span><span>balter::prelude::*;
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">tokio</span><span>::</span><span style="color:#bf616a;">main</span><span>]
+</span><span>async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>    tokio::join! {
+</span><span>        async {
+</span><span>            </span><span style="color:#65737e;">// First, set up a background load which either hits
+</span><span>            </span><span style="color:#65737e;">// 10K TPS, has a p95 latency of 200ms or has an
+</span><span>            </span><span style="color:#65737e;">// error rate of 5%
+</span><span>            </span><span style="color:#96b5b4;">set_background_load</span><span>()
+</span><span>                .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>                .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">200</span><span>), </span><span style="color:#d08770;">0.95</span><span>)
+</span><span>                .</span><span style="color:#96b5b4;">error_rate</span><span>(</span><span style="color:#d08770;">0.05</span><span>)
+</span><span>                .await;
+</span><span>        },
+</span><span>        async {
+</span><span>            </span><span style="color:#65737e;">// After 300s of waiting, test our scaling ability
+</span><span>            </span><span style="color:#65737e;">// by running a scenario which achieves either
+</span><span>            </span><span style="color:#65737e;">// 100K TPS or a p90 latency of 1,000ms
+</span><span>            </span><span style="color:#96b5b4;">sleep</span><span>(Duration::from_secs(</span><span style="color:#d08770;">300</span><span>)).await;
+</span><span>
+</span><span>            </span><span style="color:#96b5b4;">test_scaling_functionality</span><span>()
+</span><span>                .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">100_000</span><span>)
+</span><span>                .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">1_000</span><span>), </span><span style="color:#d08770;">0.90</span><span>)
+</span><span>                .</span><span style="color:#96b5b4;">duration</span><span>(Duration::from_secs(</span><span style="color:#d08770;">3600</span><span>))
+</span><span>                .await;
+</span><span>        },
+</span><span>    }
+</span><span>}
+</span></code></pre>
+
+</div>
+</div>
+
+<div class="explore-more text"
+    onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">
+    Explore More ⇩
+</div>
+<style>
+    .hero section {
+        padding: 0 5rem;
+    }
+
+    #sponsor-small {
+      display: none
+    }
+
+    @media screen and (max-width: 768px) {
+        .hero section {
+            padding: 0 2rem;
+        }
+
+        .hero-image {
+            display: none
+        }
+
+        .demo-code {
+            display: none
+        }
+
+        #sponsor-big {
+          display: none
+        }
+
+        #sponsor-small {
+          display: block
+        }
+    }
+
+    .hero-wrapper {
+      display: flex;
+      flex-wrap: no-wrap;
+    }
+</style>
+
+    </div>
+
+    
+
+    <main>
+        
+        
+        
+        
+        
+        <div class="toc">
+            <div class="toc-sticky">
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/#balter">Balter</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/#how-it-works">How It Works</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/#composability">Composability</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/#native-metrics">Native Metrics</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/#distributed-runtime">Distributed Runtime</a>
+                </div>
+                
+                
+                <div class="toc-item">
+                    <a class="subtext" href="https://www.balterloadtesting.com/balter/#support">Support</a>
+                </div>
+                
+                
+            </div>
+        </div>
+        
+        
+
+        <div class="content text">
+            
+<h1 id="balter">Balter</h1>
+<p><b>B</b>alter, <b>A</b> <b>L</b>oad <b>T</b>est<b>ER</b>, is a distributed load testing framework designed to make testing high-traffic scenarios easy. Load test scenarios are written using standard Rust code with two special attributes thrown in. Balter makes no assumptions about the service under test, and can be used for a variety of use-cases, from HTTP services to local key-value stores written in any language.</p>
+<p>High level features include:</p>
+<ul>
+<li>Flexible and composable testing via Scenario and Transaction abstractions.</li>
+<li>Constrain load tests with TPS, latency or error rate (including all three at once).</li>
+<li>Distributed runtime in just a few lines of code.</li>
+<li>Native metrics integration.</li>
+<li>Written with efficiency in mind. Don't break the bank with load testing.</li>
+</ul>
+<p>Balter is a new project and still has some rough edges. The project is being worked on full time, so if you run into any issues please let us know on Github and we will try to resolve them as quickly as possible.</p>
+<h1 id="how-it-works">How It Works</h1>
+<p>Balter is a framework for writing load tests with regular Rust code. Balter introduces two macros, <code>#[scenario]</code> and <code>#[transaction]</code> which compose together to make load test scenarios:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">use </span><span>balter::prelude::*;
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">scenario</span><span>]
+</span><span>async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">test_scaling_functionality</span><span>() {
+</span><span>    </span><span style="color:#b48ead;">let</span><span> client = reqwest::Client::new();
+</span><span>    </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>        </span><span style="color:#96b5b4;">foo_transaction</span><span>(&amp;client).await;
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">for </span><span>_ in </span><span style="color:#d08770;">0</span><span>..</span><span style="color:#d08770;">10 </span><span>{
+</span><span>            </span><span style="color:#96b5b4;">bar_transaction</span><span>(&amp;client).await;
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">transaction</span><span>]
+</span><span>async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">foo_transaction</span><span>(</span><span style="color:#bf616a;">client</span><span>: &amp;Client) -&gt; Result&lt;()&gt; {
+</span><span>    client.</span><span style="color:#96b5b4;">post</span><span>(&quot;</span><span style="color:#a3be8c;">https://example.com/api/foo</span><span>&quot;)
+</span><span>        .</span><span style="color:#96b5b4;">json</span><span>(...)
+</span><span>        .</span><span style="color:#96b5b4;">send</span><span>().await?;
+</span><span>    Ok(())
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">transaction</span><span>]
+</span><span>async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">bar_transaction</span><span>(</span><span style="color:#bf616a;">client</span><span>: &amp;Client) -&gt; Result&lt;()&gt; {
+</span><span>    client.</span><span style="color:#96b5b4;">post</span><span>(&quot;</span><span style="color:#a3be8c;">https://example.com/api/bar</span><span>&quot;)
+</span><span>        .</span><span style="color:#96b5b4;">json</span><span>(...)
+</span><span>        .</span><span style="color:#96b5b4;">send</span><span>().await?;
+</span><span>    Ok(())
+</span><span>}
+</span></code></pre>
+<p>A Scenario supercharges a Rust function with additional methods related to load testing. For instance, the <code>.tps()</code> method will run the function in parallel and constrain the rate of transactions such that the transactions per second (TPS) is equal to the value you set:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#96b5b4;">test_scaling_functionality</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>    .await;
+</span></code></pre>
+<p>Balter currently provides the following methods for a Scenario:</p>
+<ul>
+<li><code>.tps(u32)</code> Run a Scenario such that the transactions per second is equal to the value set.</li>
+<li><code>.error_rate(f64)</code> Constrain transaction rate to an average error rate.</li>
+<li><code>.latency(Duration, f64)</code> Constrain transaction rate to a specific latency at a given percentile.</li>
+<li><code>.duration(Duration)</code> Limit the Scenario to run for a given Duration (by default it runs indefinitely)</li>
+</ul>
+<p>These methods can be used together. For example, let's say you want to scale a function to achieve a p90 latency of 200ms, but not go over 10,000 TPS or an error rate of 3%, and run it for 3600s:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#96b5b4;">test_scaling_functionality</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">200</span><span>), </span><span style="color:#d08770;">0.90</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">error_rate</span><span>(</span><span style="color:#d08770;">0.03</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">duration</span><span>(Duration::from_secs(</span><span style="color:#d08770;">3600</span><span>))
+</span><span>    .await;
+</span></code></pre>
+<p>See <a href="https://www.balterloadtesting.com/balter/guide/">the guide</a> for more information on the core primitives Balter provides and current restrictions they have.</p>
+<h1 id="composability">Composability</h1>
+<p>What sets Balter apart from other load testing frameworks like JMeter or Locust is composability. Scenarios are normal async Rust functions, and this opens up a world of flexibility.</p>
+<p>For example, you can call Scenarios one after another if you want to run a set of load tests:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#96b5b4;">test_normal_user_load</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">error_rate</span><span>(</span><span style="color:#d08770;">0.03</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">duration</span><span>(Duration::from_secs(</span><span style="color:#d08770;">3600</span><span>))
+</span><span>    .await;
+</span><span>
+</span><span style="color:#96b5b4;">sleep</span><span>(Duration::from_secs(</span><span style="color:#d08770;">3600</span><span>)).await;
+</span><span>
+</span><span style="color:#96b5b4;">test_edge_cases</span><span>()
+</span><span>    .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">100</span><span>), </span><span style="color:#d08770;">0.99</span><span>)
+</span><span>    .</span><span style="color:#96b5b4;">duration</span><span>(Duration::from_secs(</span><span style="color:#d08770;">3600</span><span>))
+</span><span>    .await;
+</span></code></pre>
+<p>Where things get interesting is the ability to run Scenarios in parallel, using the standard Tokio <code>join!</code> macro. For instance, being able to set up a baseline amount of load against your service, and then slamming it with high traffic for a few minutes, is made simple with Balter:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>tokio::join! {
+</span><span>    async {
+</span><span>        </span><span style="color:#65737e;">// First, set up a background load which either hits
+</span><span>        </span><span style="color:#65737e;">// 10K TPS, has a p95 latency of 200ms or has an
+</span><span>        </span><span style="color:#65737e;">// error rate of 5%
+</span><span>        </span><span style="color:#96b5b4;">set_background_load</span><span>()
+</span><span>            .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">10_000</span><span>)
+</span><span>            .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">200</span><span>), </span><span style="color:#d08770;">0.95</span><span>)
+</span><span>            .</span><span style="color:#96b5b4;">error_rate</span><span>(</span><span style="color:#d08770;">0.05</span><span>)
+</span><span>            .await;
+</span><span>    },
+</span><span>    async {
+</span><span>        </span><span style="color:#65737e;">// After 300s of waiting, test our scaling ability
+</span><span>        </span><span style="color:#65737e;">// by running a scenario which achieves either
+</span><span>        </span><span style="color:#65737e;">// 100K TPS or a p90 latency of 1,000ms
+</span><span>        </span><span style="color:#96b5b4;">sleep</span><span>(Duration::from_secs(</span><span style="color:#d08770;">300</span><span>)).await;
+</span><span>
+</span><span>        </span><span style="color:#96b5b4;">test_scaling_functionality</span><span>()
+</span><span>            .</span><span style="color:#96b5b4;">tps</span><span>(</span><span style="color:#d08770;">100_000</span><span>)
+</span><span>            .</span><span style="color:#96b5b4;">latency</span><span>(Duration::from_millis(</span><span style="color:#d08770;">1_000</span><span>), </span><span style="color:#d08770;">0.90</span><span>)
+</span><span>            .</span><span style="color:#96b5b4;">duration</span><span>(Duration::from_secs(</span><span style="color:#d08770;">3600</span><span>))
+</span><span>            .await;
+</span><span>    },
+</span><span>}
+</span></code></pre>
+<p>Of course, you aren't limited to just running Balter Scenarios. For example, you can make API calls to disable certain services while a load test is running. The possibilities are endless! Balter aims to provide the minimal abstraction overhead to answer all high-load questions about your service.</p>
+<h1 id="native-metrics">Native Metrics</h1>
+<p>Metrics are an important part of understanding load performance, and Balter natively supports metrics via the <a href="https://github.com/metrics-rs/metrics"><code>metrics</code> crate</a>. This means you can plug in any adapter you need to output metrics in a way that integrates with your system. For instance, Prometheus integration is as easy as adding the following:</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>PrometheusBuilder::new()
+</span><span>    .</span><span style="color:#96b5b4;">with_http_listener</span><span>(&quot;</span><span style="color:#a3be8c;">0.0.0.0:8002</span><span>&quot;.parse::&lt;SocketAddr&gt;()?)
+</span><span>    .</span><span style="color:#96b5b4;">install</span><span>()?;
+</span></code></pre>
+<p>The metrics output by Balter include statistical information on TPS, latency, error-rates as well as information on the inner workings of Balter (such as the concurrency and controller states).</p>
+
+<img src="https:&#x2F;&#x2F;www.balterloadtesting.com&#x2F;balter&#x2F;processed_images&#x2F;balter-metrics-demo-1.1b95189ccee257d0.png" />
+<p>See <a href="https://www.balterloadtesting.com/balter/guide/#metrics">the guide</a> for more information.</p>
+<h1 id="distributed-runtime">Distributed Runtime</h1>
+<p>Balter provides a distributed runtime if your load testing requirements are higher than what a single machine can handle. This runtime is currently in an experimental state, though stabilization is a high priority for the near future. Complete documentation can be found in <a href="https://www.balterloadtesting.com/balter/guide/#distributed-runtime-experimental">the guide</a>.</p>
+<p>Currently, the runtime just needs a port and at least a single peer (in order to start gossiping with). Then, rather than calling a Scenario from your <code>main()</code> function, you instantiate the Runtime, which will automatically hook into the various Scenario's you have.</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#[</span><span style="color:#bf616a;">tokio</span><span>::</span><span style="color:#bf616a;">main</span><span>]
+</span><span>async </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">main</span><span>() -&gt; Result&lt;()&gt; {
+</span><span>    BalterRuntime::new()
+</span><span>        .</span><span style="color:#96b5b4;">port</span><span>(</span><span style="color:#d08770;">7621</span><span>)
+</span><span>        .</span><span style="color:#96b5b4;">peers</span><span>(&amp;[&quot;</span><span style="color:#a3be8c;">192.168.0.1</span><span>&quot;.</span><span style="color:#96b5b4;">parse</span><span>()?])
+</span><span>        .</span><span style="color:#96b5b4;">run</span><span>()
+</span><span>        .await;
+</span><span>}
+</span></code></pre>
+<p>In the background, the Balter runtime will start gossiping with peers and sharing work. In order to kick off a Scenario, you simply send an HTTP request to any Balter server, and everything else will be handled automatically. <a href="https://www.balterloadtesting.com/balter/guide/#distributed-runtime-experimental">The guide</a> covers more information on the distributed runtime, and the caveats that currently exist.</p>
+<h1 id="support">Support</h1>
+<p>Balter is a brand new project, and any support is greatly appreciated!</p>
+<p>The easiest way to support Balter is by giving us a star on Github. This helps people find us and learn about the project. <a class="github-button" href="https://github.com/BalterLoadTesting/balter" data-size="large" data-show-count="true" aria-label="Star BalterLoadTesting/balter on GitHub">Star</a></p>
+<p>The best way to financially support Balter's development is to hire us! We provide contracting for building out your team's load testing infrastructure using Balter. You will have full access and ownership over the source code, using all Open Source technology, and have complete confidence in the performance and load characteristics of your system. At the same time, you will be supporting the project and giving us insights into how to improve the framework.</p>
+<p>If you are interested in hiring us, please reach out to <a href="mailto:consulting@balterloadtesting.com">consulting@balterloadtesting.com</a></p>
+<p>Additionally, you can sponsor our developers on Github, which is a great way to show support, especially if there are features you're interested in seeing added!</p>
+<iframe id="sponsor-big" src="https://github.com/sponsors/byronwasti/card" title="Sponsor byronwasti" height="100" width="600" style="border: 0;"></iframe>
+<iframe id="sponsor-small" src="https://github.com/sponsors/byronwasti/button" title="Sponsor byronwasti" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+
+
+        </div>
+
+        
+        
+    </main>
+
+    
+<footer>
+    <small class="subtext">
+        <a href="mailto:contact@balterloadtesting.com">contact@balterloadtesting.com</a>
+    </small>
+    <small class="subtext">
+        <a href="https://balterloadtesting.com">BalterLoadTesting.com</a> © 2024
+    </small>
+</footer>
+
+</body>
+<script>
+    const scrollHandler = entries => {
+        // Find the first entry which intersecting and ratio > 0.9 to highlight.
+        let entry = entries.find(entry => {
+            return entry.isIntersecting && entry.intersectionRatio > 0.9;
+        });
+        if (!entry) return;
+
+        document.querySelectorAll(".toc a").forEach((item) => {
+            item.classList.remove("active");
+        });
+
+        // let url = new URL(`#${entry.target.id}`);
+        let link = document.querySelector(`.toc a[href$="${decodeURIComponent(`#${entry.target.id}`)}"]`)
+        if (link) {
+            link.classList.add("active");
+            link.scrollIntoView({ behavior: "auto", block: "nearest" });
+        }
+    };
+    // Set -100px root margin to improve highlight experience.
+    const observer = new IntersectionObserver(scrollHandler, { threshold: 1 });
+    let items = document.querySelectorAll('h1,h2,h3,h4,h5,h6');
+    items.forEach(item => observer.observe(item));
+</script>
+
+</html>
